@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
-import React from 'react';
+import React from "react";
+import { useState } from "react";
 import {
   GoogleAuthProvider,
   getAuth,
@@ -16,6 +17,11 @@ import {
   collection,
   where,
   addDoc,
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+  deleteDoc,
 } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -73,6 +79,7 @@ const registerWithEmailAndPassword = async (name, email, password) => {
       authProvider: "local",
       email,
     });
+    Create(name, email);
   } catch (err) {
     console.error(err);
     alert(err.message);
@@ -92,6 +99,50 @@ const sendPasswordReset = async (email) => {
 const logout = () => {
   signOut(auth);
 };
+
+/*
+const [longitude, setLong] = useState("");
+const [latitude, setLat] = useState("");
+*/
+
+function Create(username, email) {
+  setDoc(doc(db, "walkingbuddy", "users"), {
+    username: username,
+    email: email,
+    //longitude: longitude,
+    //latitude: latitude,
+  })
+    .then(() => {
+      // Data saved successfully!
+      console.log("data submitted");
+    })
+    .catch((error) => {
+      // The write failed...
+      console.log(error);
+    });
+}
+/*
+function getSepcificDataWithID() {
+  getDoc(doc(db, "walkingbuddy", "IMx2OXMCR0WD7upXNcKq"))
+    .then((docData) => {
+      // Data saved successfully!
+
+      if (docData.exists()) {
+        // console.log(docData.data());
+
+        setName(docData.data().username);
+        setEmail(docData.data().email);
+      } else {
+        console.log("No such a data!");
+      }
+    })
+    .catch((error) => {
+      // The write failed...
+      console.log(error);
+    });
+}
+
+*/
 
 export {
   auth,
