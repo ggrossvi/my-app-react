@@ -80,6 +80,7 @@ const registerWithEmailAndPassword = async (name, email, password) => {
       email,
     });
     Create(name, email);
+    // getSepcificDataWithID();
   } catch (err) {
     console.error(err);
     alert(err.message);
@@ -106,11 +107,12 @@ const [latitude, setLat] = useState("");
 */
 
 function Create(username, email) {
-  setDoc(doc(db, "walkingbuddy", "users"), {
+  setDoc(doc(db, "walkingbuddyTest", email), {
     username: username,
     email: email,
-    //longitude: longitude,
-    //latitude: latitude,
+    // initialize to zero start
+    longitude: 0.0,
+    latitude: 0.0,
   })
     .then(() => {
       // Data saved successfully!
@@ -121,19 +123,37 @@ function Create(username, email) {
       console.log(error);
     });
 }
-/*
+
+export default function Update(latitude, longitude, email) {
+  if (email && longitude && latitude) {
+    updateDoc(doc(db, "walkingbuddyTest", email), {
+      longitude: longitude,
+      latitude: latitude,
+    })
+      .then(() => {
+        // Data saved successfully!
+        console.log("data updated");
+      })
+      .catch((error) => {
+        // The write failed...
+        console.log(error);
+      });
+  }
+}
+
 function getSepcificDataWithID() {
-  getDoc(doc(db, "walkingbuddy", "IMx2OXMCR0WD7upXNcKq"))
+  getDoc(doc(db, "walkingbuddy", "zADXQKcjaLlMygyyafHP"))
     .then((docData) => {
       // Data saved successfully!
 
       if (docData.exists()) {
         // console.log(docData.data());
-
-        setName(docData.data().username);
-        setEmail(docData.data().email);
+        console.log(docData.data().username);
+        console.log(docData.data().email);
+        // setName(docData.data().username);
+        // setEmail(docData.data().email);
       } else {
-        console.log("No such a data!");
+        console.log("No such data!");
       }
     })
     .catch((error) => {
@@ -141,8 +161,6 @@ function getSepcificDataWithID() {
       console.log(error);
     });
 }
-
-*/
 
 export {
   auth,

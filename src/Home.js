@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import ReactDOM from "react-dom";
 import React, { Component } from "react";
 import "./index.css";
@@ -6,11 +7,13 @@ import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
 import { usePosition } from "use-position";
 import { InfoWindow } from "@react-google-maps/api";
 import { Circle } from "@react-google-maps/api";
+import update from "./firebase";
 
 function Home() {
+  console.log(`${process.env.REACT_APP_googleMapsApiKey}`);
   const { isLoaded } = useLoadScript({
     //   googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
-    googleMapsApiKey: "AIzaSyCyoLxsOMKMpvmCHDGc933Y4VK-rmf6aW8",
+    googleMapsApiKey: `${process.env.REACT_APP_googleMapsApiKey}`,
   });
 
   if (!isLoaded) return <div>Loading...</div>;
@@ -23,10 +26,18 @@ function Home() {
   return <Maps />;
 }
 
+function PopulateLocationInformation(latitude, longitude) {
+  // useLocation fetches props from Login page use this because different from when using with component because using within navigation Use position gives coordinates, UseLocation access the parameter is grabbed from navigation hook
+  const location = useLocation();
+  console.log(location.state.user_email, "This is location info");
+  update(latitude,longitude,location.state.user_email);
+}
+
 function Maps() {
   const [selected, setSelected] = useState(null);
 
   const watch = true;
+  // once access is allowed then it populates lat and long
   const { latitude, longitude } = usePosition(watch, {
     enableHighAccuracy: true,
   });
@@ -34,6 +45,7 @@ function Maps() {
   //  const center = useMemo(() => ({ lat: latitude, lng: longitude}), []);
 
   const center = { lat: latitude, lng: longitude };
+  PopulateLocationInformation(latitude, longitude);
 
   // navigator.geolocation.getCurrentPosition(function(position) {
   //   console.log("Latitude is :", position.coords.latitude);
@@ -113,4 +125,3 @@ function Maps() {
 }
 
 export default Home;
-

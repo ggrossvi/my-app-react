@@ -15,7 +15,8 @@ function Login() {
       // maybe trigger a loading screen
       return;
     }
-    if (user) navigate("/dashboard");
+    // passing user info to dashboard
+    if (user) navigate("/dashboard", { state: { user_email: email } });
   }, [user, loading]);
 
   return (

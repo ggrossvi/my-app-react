@@ -22,7 +22,8 @@ function Register() {
 
   useEffect(() => {
     if (loading) return;
-    if (user) navigate("/dashboard");
+    // passing user props
+    if (user) navigate("/dashboard", { state: { user_email: email } });
   }, [user, loading]);
 
   return (
