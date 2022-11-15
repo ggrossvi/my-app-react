@@ -8,6 +8,7 @@ import { usePosition } from "use-position";
 import { InfoWindow } from "@react-google-maps/api";
 import { Circle } from "@react-google-maps/api";
 import update from "./firebase";
+import { getAlldata } from "./firebase";
 
 function Home() {
   console.log(`${process.env.REACT_APP_googleMapsApiKey}`);
@@ -46,7 +47,7 @@ function Maps() {
 
   const center = { lat: latitude, lng: longitude };
   PopulateLocationInformation(latitude, longitude);
-
+  getAlldata();
   // navigator.geolocation.getCurrentPosition(function(position) {
   //   console.log("Latitude is :", position.coords.latitude);
   //  console.log("Longitude is :", position.coords.longitude);

@@ -1,4 +1,5 @@
 import { initializeApp } from "firebase/app";
+import { databaseCollection } from "./constants";
 import React from "react";
 import { useState } from "react";
 import {
@@ -107,7 +108,7 @@ const [latitude, setLat] = useState("");
 */
 
 function Create(username, email) {
-  setDoc(doc(db, "walkingbuddyTest", email), {
+  setDoc(doc(db, databaseCollection, email), {
     username: username,
     email: email,
     // initialize to zero start
@@ -126,7 +127,7 @@ function Create(username, email) {
 
 export default function Update(latitude, longitude, email) {
   if (email && longitude && latitude) {
-    updateDoc(doc(db, "walkingbuddyTest", email), {
+    updateDoc(doc(db, databaseCollection, email), {
       longitude: longitude,
       latitude: latitude,
     })
@@ -142,7 +143,7 @@ export default function Update(latitude, longitude, email) {
 }
 
 function getSepcificDataWithID() {
-  getDoc(doc(db, "walkingbuddy", "zADXQKcjaLlMygyyafHP"))
+  getDoc(doc(db, databaseCollection, "zADXQKcjaLlMygyyafHP"))
     .then((docData) => {
       // Data saved successfully!
 
@@ -162,6 +163,16 @@ function getSepcificDataWithID() {
     });
 }
 
+function getAlldata() {
+  getDocs(collection(db, databaseCollection)).then((docSnap) => {
+    let locationmap = [];
+    docSnap.forEach((doc) => {
+      locationmap.push({ ...doc.data(), id: doc.id });
+    });
+    console.log("Document data:", locationmap);
+  });
+}
+
 export {
   auth,
   db,
@@ -170,4 +181,5 @@ export {
   registerWithEmailAndPassword,
   sendPasswordReset,
   logout,
+  getAlldata,
 };
