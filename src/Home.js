@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import ReactDOM from "react-dom";
 import React, { Component } from "react";
@@ -9,6 +9,22 @@ import { InfoWindow } from "@react-google-maps/api";
 import { Circle } from "@react-google-maps/api";
 import update from "./firebase";
 import { getAlldata } from "./firebase";
+import { databaseCollection } from "./constants";
+import { initializeApp } from "firebase/app";
+import { useNavigate } from "react-router-dom";
+import {
+  getFirestore,
+  query,
+  getDocs,
+  collection,
+  where,
+  addDoc,
+  doc,
+  setDoc,
+  updateDoc,
+  deleteDoc,
+} from "firebase/firestore";
+import logout from "./firebase";
 
 function Home() {
   console.log(`${process.env.REACT_APP_googleMapsApiKey}`);
@@ -31,7 +47,7 @@ function PopulateLocationInformation(latitude, longitude) {
   // useLocation fetches props from Login page use this because different from when using with component because using within navigation Use position gives coordinates, UseLocation access the parameter is grabbed from navigation hook
   const location = useLocation();
   console.log(location.state.user_email, "This is location info");
-  update(latitude,longitude,location.state.user_email);
+  update(latitude, longitude, location.state.user_email);
 }
 
 function Maps() {
@@ -47,7 +63,35 @@ function Maps() {
 
   const center = { lat: latitude, lng: longitude };
   PopulateLocationInformation(latitude, longitude);
-  getAlldata();
+
+  const firebaseConfig = {
+    apiKey: `${process.env.REACT_APP_API_KEY}`,
+    authDomain: `${process.env.REACT_APP_authDomain}`,
+    projectId: `${process.env.REACT_APP_projectId}`,
+    storageBucket: `${process.env.REACT_APP_storageBucket}`,
+    messagingSenderId: `${process.env.REACT_APP_messagingSenderId}`,
+    appId: `${process.env.REACT_APP_appId}`,
+    measurementId: `${process.env.REACT_APP_measurementId}`,
+  };
+
+  // get coordinates in array
+  const [markers, setFire] = useState([]);
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  var locationmap = [];
+  useEffect(() => {
+    const docs = getDocs(collection(db, databaseCollection)).then((docSnap) => {
+      docSnap.forEach((doc) => {
+        locationmap.push({ ...doc.data(), id: doc.id });
+      });
+      setFire(locationmap);
+      //return locationmap;
+      console.log("fireeeee", markers);
+    });
+  }, []);
+
+  console.log("locationCoordinates:", markers);
+
   // navigator.geolocation.getCurrentPosition(function(position) {
   //   console.log("Latitude is :", position.coords.latitude);
   //  console.log("Longitude is :", position.coords.longitude);
@@ -67,6 +111,18 @@ function Maps() {
     radius: 600,
     zIndex: 1,
   };
+
+  const [clickbutton, setClickButton] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (clickbutton === true) navigate("/");
+  }, [clickbutton]);
+
+  const handleOnClick = () => {
+    logout();
+    setClickButton(true);
+  };
   // radius is in meters
   return (
     <div>
@@ -76,7 +132,9 @@ function Maps() {
           🗺️
         </span>
       </h1>
-
+      <button onClick={handleOnClick} style={{ float: "right" }}>
+        Logout
+      </button>
       <GoogleMap
         // options = {options}
         id="circle-example"
@@ -86,35 +144,46 @@ function Maps() {
       >
         <Circle center={center} radius={10} options={options} />
 
-        <Marker
-          position={{ lat: parseFloat(latitude), lng: parseFloat(longitude) }}
-          onClick={() => {
-            setSelected({
-              lat: parseFloat(latitude),
-              lng: parseFloat(longitude),
-            });
-            console.log(selected);
-          }}
-          icon={{
-            url: "/personicon.png",
-            scaledSize: new window.google.maps.Size(25, 25),
-          }}
-        />
-
-        {selected && (
-          <InfoWindow
-            //    position={{lat: selected.lat, lng:selected.lng}}
-            position={{ lat: parseFloat(latitude), lng: parseFloat(longitude) }}
-            onCloseClick={() => {
-              console.log(selected);
-              setSelected(null);
-            }}
-          >
-            <div>
-              {latitude}, {longitude}
-            </div>
-          </InfoWindow>
-        )}
+        {markers &&
+          markers.map(({ email, latitude, longitude }) => (
+            <React.Fragment>
+              <Marker
+                key={email}
+                position={{
+                  lat: parseFloat(latitude),
+                  lng: parseFloat(longitude),
+                }}
+                onClick={() => {
+                  setSelected({
+                    lat: parseFloat(latitude),
+                    lng: parseFloat(longitude),
+                  });
+                  console.log(selected);
+                }}
+                icon={{
+                  url: "/personicon.png",
+                  scaledSize: new window.google.maps.Size(25, 25),
+                }}
+              />
+              {selected && (
+                <InfoWindow
+                  //    position={{lat: selected.lat, lng:selected.lng}}
+                  position={{
+                    lat: parseFloat(latitude),
+                    lng: parseFloat(longitude),
+                  }}
+                  onCloseClick={() => {
+                    console.log(selected);
+                    setSelected(null);
+                  }}
+                >
+                  <div>
+                    {latitude}, {longitude}
+                  </div>
+                </InfoWindow>
+              )}
+            </React.Fragment>
+          ))}
 
         <Circle
           center={{ lat: parseFloat(latitude), lng: parseFloat(longitude) }}

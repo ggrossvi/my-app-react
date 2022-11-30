@@ -35,6 +35,7 @@ const firebaseConfig = {
   measurementId: `${process.env.REACT_APP_measurementId}`,
 };
 
+let locationmap = [];
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -100,6 +101,7 @@ const sendPasswordReset = async (email) => {
 
 const logout = () => {
   signOut(auth);
+  console.log("logout occured");
 };
 
 /*
@@ -164,13 +166,19 @@ function getSepcificDataWithID() {
 }
 
 function getAlldata() {
+  const [fire, setFire] = useState([]);
+  locationmap.length = 0;
   getDocs(collection(db, databaseCollection)).then((docSnap) => {
-    let locationmap = [];
     docSnap.forEach((doc) => {
       locationmap.push({ ...doc.data(), id: doc.id });
+      // setting locationmap into the state
     });
-    console.log("Document data:", locationmap);
+
+    setFire(locationmap);
+    console.log("Document data:", fire);
   });
+  // return the updated variable
+  return fire;
 }
 
 export {
