@@ -86,8 +86,6 @@ const registerWithEmailAndPassword = async (
       name,
       authProvider: "local",
       email,
-      status,
-      userDescription,
     });
     Create(name, email, status, userDescription);
     // getSepcificDataWithID();
@@ -124,8 +122,8 @@ function Create(username, email, userDescription, status) {
     // initialize to zero start
     longitude: 0.0,
     latitude: 0.0,
-    userDescription: userDescription,
-    status: status,
+    userDescription: "",
+    status: "",
   })
     .then(() => {
       // Data saved successfully!
@@ -142,6 +140,23 @@ export default function Update(latitude, longitude, email) {
     updateDoc(doc(db, databaseCollection, email), {
       longitude: longitude,
       latitude: latitude,
+    })
+      .then(() => {
+        // Data saved successfully!
+        console.log("data updated");
+      })
+      .catch((error) => {
+        // The write failed...
+        console.log(error);
+      });
+  }
+}
+// if you use export default you can only use one export default function in a file
+function updateUserProfile(userStatus, userDescription, email) {
+  if (email) {
+    updateDoc(doc(db, databaseCollection, email), {
+      userStatus: userStatus,
+      userDescription: userDescription,
     })
       .then(() => {
         // Data saved successfully!
@@ -200,4 +215,5 @@ export {
   sendPasswordReset,
   logout,
   getAlldata,
+  updateUserProfile,
 };

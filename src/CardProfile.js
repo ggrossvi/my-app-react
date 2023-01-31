@@ -3,6 +3,7 @@ import "./CardProfile.css";
 import { useNavigate } from "react-router-dom";
 import { registerWithEmailAndPassword } from "./firebase";
 import { useLocation } from "react-router-dom";
+import { updateUserProfile } from "./firebase";
 
 
 // shift option f to indent control shift f in windows
@@ -123,15 +124,7 @@ function CardProfile (props) {
   };
   // saves into database also import register with email and password 
   const register = () => {
-    console.log(location.state.user_email, "This is location info");
-    console.log(location.state.userName, "This is name info");
-    registerWithEmailAndPassword(
-      location.state.userName,
-      location.state.user_email,
-      location.state.userPassword,
-      status,
-      name
-    );
+    updateUserProfile(status,name,location.state.user_email)
 
   };
 
