@@ -13,6 +13,7 @@ function Register() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [user, loading, error] = useAuthState(auth);
+  // built in function
   const navigate = useNavigate();
 
   const register = () => {
@@ -22,8 +23,10 @@ function Register() {
 
   useEffect(() => {
     if (loading) return;
-    // passing user props
-    if (user) navigate("/dashboard", { state: { user_email: email } });
+    // passing user props redirect to profile page
+    // naming convention Caps each Word for methods like useEffect use camelcase
+    // we need to pass name and passord as props to the cardProfile
+    if (user) navigate("/profile", { state: { user_email: email, userName: name, userPassword: password } });
   }, [user, loading]);
 
   return (

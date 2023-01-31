@@ -24,7 +24,7 @@ import {
   updateDoc,
   deleteDoc,
 } from "firebase/firestore";
-import logout from "./firebase";
+import { logout } from "./firebase";
 
 function Home() {
   console.log(`${process.env.REACT_APP_googleMapsApiKey}`);
@@ -52,13 +52,28 @@ function PopulateLocationInformation(latitude, longitude) {
 
 function Maps() {
   const [selected, setSelected] = useState(null);
+  const [clickbutton, setClickButton] = useState(false);
+  const navigate = useNavigate();
+  const [openInfoWindowMarkerId, setopenInfoWindowMarkerId] = useState("");
+
+  useEffect(() => {
+    if (clickbutton === true) navigate("/");
+  }, [clickbutton]);
+
+  const handleOnClick = () => {
+    logout();
+    setClickButton(true);
+  };
 
   const watch = true;
   // once access is allowed then it populates lat and long
   const { latitude, longitude } = usePosition(watch, {
     enableHighAccuracy: true,
   });
-
+  //markerId has to be unique so email is unique so calling from inside marker
+  const toggleOpen = (markerId) => {
+    setopenInfoWindowMarkerId(markerId);
+  };
   //  const center = useMemo(() => ({ lat: latitude, lng: longitude}), []);
 
   const center = { lat: latitude, lng: longitude };
@@ -112,17 +127,6 @@ function Maps() {
     zIndex: 1,
   };
 
-  const [clickbutton, setClickButton] = useState(false);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (clickbutton === true) navigate("/");
-  }, [clickbutton]);
-
-  const handleOnClick = () => {
-    logout();
-    setClickButton(true);
-  };
   // radius is in meters
   return (
     <div>
@@ -131,10 +135,13 @@ function Maps() {
         <span role="img" aria-label="map">
           🗺️
         </span>
+        <button
+          onClick={handleOnClick}
+          style={{ float: "right", color: "grey", background: "blue" }}
+        >
+          Logout
+        </button>
       </h1>
-      <button onClick={handleOnClick} style={{ float: "right" }}>
-        Logout
-      </button>
       <GoogleMap
         // options = {options}
         id="circle-example"
@@ -147,17 +154,22 @@ function Maps() {
         {markers &&
           markers.map(({ email, latitude, longitude }) => (
             <React.Fragment>
+              {/* unique key is for the whole map the one under marker is for just the marker*/}
+              key={email}
               <Marker
                 key={email}
                 position={{
                   lat: parseFloat(latitude),
                   lng: parseFloat(longitude),
                 }}
-                onClick={() => {
-                  setSelected({
-                    lat: parseFloat(latitude),
-                    lng: parseFloat(longitude),
-                  });
+                onClick={(props, marker) => {
+                  toggleOpen(email);
+                  setSelected(
+                    true
+
+                    // lat: parseFloat(latitude),
+                    // lng: parseFloat(longitude),
+                  );
                   console.log(selected);
                 }}
                 icon={{
@@ -165,7 +177,8 @@ function Maps() {
                   scaledSize: new window.google.maps.Size(25, 25),
                 }}
               />
-              {selected && (
+              {/* set to true for the marker selected through email id Edit /toggle block comment */}
+              {openInfoWindowMarkerId === email && (
                 <InfoWindow
                   //    position={{lat: selected.lat, lng:selected.lng}}
                   position={{
@@ -174,11 +187,15 @@ function Maps() {
                   }}
                   onCloseClick={() => {
                     console.log(selected);
-                    setSelected(null);
+                    // when you close it setopenInfoWindowMarkerId clears data and sets to none
+                    setopenInfoWindowMarkerId("");
+                    // null apps stops working if use so better use false
+                    setSelected(false);
                   }}
                 >
                   <div>
-                    {latitude}, {longitude}
+                    {/* if exists return latitude and if not set to 0.0 */}
+                    {latitude?latitude:0.0}, {longitude?longitude:0.0}
                   </div>
                 </InfoWindow>
               )}

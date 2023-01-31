@@ -71,7 +71,13 @@ const logInWithEmailAndPassword = async (email, password) => {
   }
 };
 
-const registerWithEmailAndPassword = async (name, email, password) => {
+const registerWithEmailAndPassword = async (
+  name,
+  email,
+  password,
+  status,
+  userDescription
+) => {
   try {
     const res = await createUserWithEmailAndPassword(auth, email, password);
     const user = res.user;
@@ -80,8 +86,10 @@ const registerWithEmailAndPassword = async (name, email, password) => {
       name,
       authProvider: "local",
       email,
+      status,
+      userDescription,
     });
-    Create(name, email);
+    Create(name, email, status, userDescription);
     // getSepcificDataWithID();
   } catch (err) {
     console.error(err);
@@ -100,8 +108,8 @@ const sendPasswordReset = async (email) => {
 };
 
 const logout = () => {
-  signOut(auth);
   console.log("logout occured");
+  signOut(auth);
 };
 
 /*
@@ -109,13 +117,15 @@ const [longitude, setLong] = useState("");
 const [latitude, setLat] = useState("");
 */
 
-function Create(username, email) {
+function Create(username, email, userDescription, status) {
   setDoc(doc(db, databaseCollection, email), {
     username: username,
     email: email,
     // initialize to zero start
     longitude: 0.0,
     latitude: 0.0,
+    userDescription: userDescription,
+    status: status,
   })
     .then(() => {
       // Data saved successfully!
