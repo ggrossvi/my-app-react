@@ -45,9 +45,12 @@ function Home() {
 
 function PopulateLocationInformation(latitude, longitude) {
   // useLocation fetches props from Login page use this because different from when using with component because using within navigation Use position gives coordinates, UseLocation access the parameter is grabbed from navigation hook
+
   const location = useLocation();
-  console.log(location.state.user_email, "This is location info");
-  update(latitude, longitude, location.state.user_email);
+  if (location.state) {
+    console.log(location.state.user_email, "This is location info");
+    update(latitude, longitude, location.state.user_email);
+  }
 }
 
 function Maps() {
@@ -55,6 +58,7 @@ function Maps() {
   const [clickbutton, setClickButton] = useState(false);
   const navigate = useNavigate();
   const [openInfoWindowMarkerId, setopenInfoWindowMarkerId] = useState("");
+  const location = useLocation();
 
   useEffect(() => {
     if (clickbutton === true) navigate("/");
@@ -99,6 +103,7 @@ function Maps() {
       docSnap.forEach((doc) => {
         locationmap.push({ ...doc.data(), id: doc.id });
       });
+      // setFire stores data in the markers
       setFire(locationmap);
       //return locationmap;
       console.log("fireeeee", markers);
@@ -150,58 +155,72 @@ function Maps() {
         mapContainerClassName="map-container"
       >
         <Circle center={center} radius={10} options={options} />
-
+        // goes through markers each user and puts email lat&long
         {markers &&
-          markers.map(({ email, latitude, longitude }) => (
-            <React.Fragment>
-              {/* unique key is for the whole map the one under marker is for just the marker*/}
-              key={email}
-              <Marker
+          markers.map(
+            ({
+              email,
+              latitude,
+              longitude,
+              userStatus,
+              username,
+              userDescription,
+            }) => (
+              <React.Fragment>
+                {/* unique key is for the whole map the one under marker is for just the marker*/}
                 key={email}
-                position={{
-                  lat: parseFloat(latitude),
-                  lng: parseFloat(longitude),
-                }}
-                onClick={(props, marker) => {
-                  toggleOpen(email);
-                  setSelected(
-                    true
-
-                    // lat: parseFloat(latitude),
-                    // lng: parseFloat(longitude),
-                  );
-                  console.log(selected);
-                }}
-                icon={{
-                  url: "/personicon.png",
-                  scaledSize: new window.google.maps.Size(25, 25),
-                }}
-              />
-              {/* set to true for the marker selected through email id Edit /toggle block comment */}
-              {openInfoWindowMarkerId === email && (
-                <InfoWindow
-                  //    position={{lat: selected.lat, lng:selected.lng}}
+                <Marker
+                  key={email}
                   position={{
                     lat: parseFloat(latitude),
                     lng: parseFloat(longitude),
                   }}
-                  onCloseClick={() => {
-                    console.log(selected);
-                    // when you close it setopenInfoWindowMarkerId clears data and sets to none
-                    setopenInfoWindowMarkerId("");
-                    // null apps stops working if use so better use false
-                    setSelected(false);
-                  }}
-                >
-                  <div>
-                    {/* if exists return latitude and if not set to 0.0 */}
-                    {latitude?latitude:0.0}, {longitude?longitude:0.0}
-                  </div>
-                </InfoWindow>
-              )}
-            </React.Fragment>
-          ))}
+                  onClick={(props, marker) => {
+                    toggleOpen(email);
+                    setSelected(
+                      true
 
+                      // lat: parseFloat(latitude),
+                      // lng: parseFloat(longitude),
+                    );
+                    console.log(selected);
+                  }}
+                  icon={{
+                    url: "/personicon.png",
+                    scaledSize: new window.google.maps.Size(25, 25),
+                  }}
+                />
+                {/* set to true for the marker selected through email id Edit /toggle block comment */}
+                {openInfoWindowMarkerId === email && (
+                  <InfoWindow
+                    //    position={{lat: selected.lat, lng:selected.lng}}
+                    position={{
+                      lat: parseFloat(latitude),
+                      lng: parseFloat(longitude),
+                    }}
+                    onCloseClick={() => {
+                      console.log(selected);
+                      // when you close it setopenInfoWindowMarkerId clears data and sets to none
+                      setopenInfoWindowMarkerId("");
+                      // null apps stops working if use so better use false
+                      setSelected(false);
+                    }}
+                  >
+                    <div class="gm-style">
+                      {/* if exists return latitude and if not set to 0.0 */}
+                      {/* {latitude?latitude:0.0}, {longitude?longitude:0.0} */}
+                      {username}
+                      <br />
+                      {/*  location.state exists - not undefined props exist if no props not coming from register page.    */}
+                      {location.state ? userStatus : ""}
+                      <br />
+                      {location.state ? userDescription : ""}
+                    </div>
+                  </InfoWindow>
+                )}
+              </React.Fragment>
+            )
+          )}
         <Circle
           center={{ lat: parseFloat(latitude), lng: parseFloat(longitude) }}
           radius={500000}

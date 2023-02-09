@@ -51,6 +51,9 @@ function Login() {
         <div>
           Don't have an account? <Link to="/register">Register</Link> now.
         </div>
+        <div>
+          See buddies in your area without registering. <Link to="/dashboard">Map of Buddies</Link>.
+        </div>
       </div>
     </div>
   );

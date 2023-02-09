@@ -6,6 +6,7 @@ import { useLocation } from "react-router-dom";
 import { updateUserProfile } from "./firebase";
 
 
+
 // shift option f to indent control shift f in windows
 
 const ImgUpload = ({ onChange, src }) => (
@@ -97,8 +98,14 @@ function CardProfile (props) {
      
       // passing user props redirect to profile page
       // naming convention Caps each Word for methods like useEffect use camelcase
-
-      if (active === "profile") navigate("/dashboard", { state: { user_email: active} });
+      //check if location.state exists
+      if(location.state){
+        if (active === "profile") 
+        // pass to map page user status and description
+        // dashboard - home page with props being passed if props passed coming register page 
+        navigate("/dashboard", { state: { user_email: location.state.user_email, user_status: status, user_name: name} }); //going to dashboard,  user state and description pass as props after state is the prop you are passing email status and description.  
+      }
+     
     }, [active]);
 
   // functional call back functions need const before functions  

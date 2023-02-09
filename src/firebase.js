@@ -24,6 +24,7 @@ import {
   updateDoc,
   deleteDoc,
 } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: `${process.env.REACT_APP_API_KEY}`,
@@ -217,3 +218,4 @@ export {
   getAlldata,
   updateUserProfile,
 };
+export const storage = getStorage(app);
