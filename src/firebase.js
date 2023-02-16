@@ -36,6 +36,11 @@ const firebaseConfig = {
   measurementId: `${process.env.REACT_APP_measurementId}`,
 };
 
+// steps for storage
+// 1.reference to storage object
+// 2. upload object and get a link to it.
+// 3. adding the link to database firebase object
+
 let locationmap = [];
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -125,6 +130,7 @@ function Create(username, email, userDescription, status) {
     latitude: 0.0,
     userDescription: "",
     status: "",
+    imageUrl: "",
   })
     .then(() => {
       // Data saved successfully!
@@ -153,11 +159,12 @@ export default function Update(latitude, longitude, email) {
   }
 }
 // if you use export default you can only use one export default function in a file
-function updateUserProfile(userStatus, userDescription, email) {
+function updateUserProfile(userStatus, userDescription, email, url) {
   if (email) {
     updateDoc(doc(db, databaseCollection, email), {
       userStatus: userStatus,
       userDescription: userDescription,
+      imageUrl: url,
     })
       .then(() => {
         // Data saved successfully!

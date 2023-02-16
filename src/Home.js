@@ -25,6 +25,7 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { logout } from "./firebase";
+import { Avatar } from '@mui/material';
 
 function Home() {
   console.log(`${process.env.REACT_APP_googleMapsApiKey}`);
@@ -165,6 +166,7 @@ function Maps() {
               userStatus,
               username,
               userDescription,
+              imageUrl,
             }) => (
               <React.Fragment>
                 {/* unique key is for the whole map the one under marker is for just the marker*/}
@@ -209,6 +211,10 @@ function Maps() {
                     <div class="gm-style">
                       {/* if exists return latitude and if not set to 0.0 */}
                       {/* {latitude?latitude:0.0}, {longitude?longitude:0.0} */}
+                      <Avatar
+                        alt="profile picture"
+                        src={imageUrl}
+                      />
                       {username}
                       <br />
                       {/*  location.state exists - not undefined props exist if no props not coming from register page.    */}
