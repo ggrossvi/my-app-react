@@ -25,7 +25,7 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { logout } from "./firebase";
-import { Avatar } from '@mui/material';
+import { Avatar } from "@mui/material";
 
 function Home() {
   console.log(`${process.env.REACT_APP_googleMapsApiKey}`);
@@ -80,7 +80,7 @@ function Maps() {
     setopenInfoWindowMarkerId(markerId);
   };
   //  const center = useMemo(() => ({ lat: latitude, lng: longitude}), []);
-
+  // current location pass to function
   const center = { lat: latitude, lng: longitude };
   PopulateLocationInformation(latitude, longitude);
 
@@ -106,12 +106,32 @@ function Maps() {
       });
       // setFire stores data in the markers
       setFire(locationmap);
+
       //return locationmap;
       console.log("fireeeee", markers);
     });
   }, []);
 
   console.log("locationCoordinates:", markers);
+
+  // map fetched from database
+  markers &&
+    markers.filter((markers) => {
+      var locationlatlng = new window.google.maps.LatLng(
+        locationmap.latitude,
+        locationmap.longitude
+      );
+      var fromlocationlatlng = new window.google.maps.LatLng(
+        latitude,
+        longitude
+      );
+      let distance = window.google.maps.geometry.spherical.computeDistanceBetween(
+        fromlocationlatlng,
+        locationlatlng,
+        500
+      );
+      console.log("Distance fetched", distance);
+    });
 
   // navigator.geolocation.getCurrentPosition(function(position) {
   //   console.log("Latitude is :", position.coords.latitude);
@@ -143,7 +163,11 @@ function Maps() {
         </span>
         <button
           onClick={handleOnClick}
-          style={{ float: "right", color: "grey", background: "blue" }}
+          style={{
+            float: "right",
+            color: "grey",
+            background: "blue",
+          }}
         >
           Logout
         </button>
@@ -152,11 +176,15 @@ function Maps() {
         // options = {options}
         id="circle-example"
         zoom={12}
-        center={{ lat: parseFloat(latitude), lng: parseFloat(longitude) }}
+        center={{
+          lat: parseFloat(latitude),
+          lng: parseFloat(longitude),
+        }}
         mapContainerClassName="map-container"
       >
         <Circle center={center} radius={10} options={options} />
-        // goes through markers each user and puts email lat&long
+        // Filter markers down to vicinity // goes through markers each user and
+        puts email lat&long
         {markers &&
           markers.map(
             ({
@@ -211,10 +239,12 @@ function Maps() {
                     <div class="gm-style">
                       {/* if exists return latitude and if not set to 0.0 */}
                       {/* {latitude?latitude:0.0}, {longitude?longitude:0.0} */}
-                      <Avatar
-                        alt="profile picture"
-                        src={imageUrl}
-                      />
+
+                      {location.state ? (
+                        <Avatar alt="profile picture" src={imageUrl} />
+                      ) : (
+                        ""
+                      )}
                       {username}
                       <br />
                       {/*  location.state exists - not undefined props exist if no props not coming from register page.    */}
@@ -228,7 +258,10 @@ function Maps() {
             )
           )}
         <Circle
-          center={{ lat: parseFloat(latitude), lng: parseFloat(longitude) }}
+          center={{
+            lat: parseFloat(latitude),
+            lng: parseFloat(longitude),
+          }}
           radius={500000}
         />
       </GoogleMap>

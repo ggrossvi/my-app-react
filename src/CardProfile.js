@@ -120,6 +120,7 @@ function CardProfile(props) {
     e.preventDefault();
     const reader = new FileReader();
     const file = e.target.files[0];
+    console.log("filename:", file);
     reader.onloadend = () => {
       setFile(file);
       setImagePreviewUrl(reader.result);
@@ -144,7 +145,7 @@ function CardProfile(props) {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Create a child reference
-    const imagesRef = ref(storage, "images");
+    const imagesRef = ref(storage, file.name);
     uploadBytes(imagesRef, file)
       .then(() => {
         console.log("Uploaded a blob or file!");
