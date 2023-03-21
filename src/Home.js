@@ -115,23 +115,32 @@ function Maps() {
   console.log("locationCoordinates:", markers);
 
   // map fetched from database
-  markers &&
+  var returnMarkers =
+    markers &&
     markers.filter((markers) => {
       var locationlatlng = new window.google.maps.LatLng(
-        locationmap.latitude,
-        locationmap.longitude
+        markers.latitude,
+        markers.longitude
       );
+      console.log("location latlng:", locationlatlng);
+      // current coordinates
       var fromlocationlatlng = new window.google.maps.LatLng(
         latitude,
         longitude
       );
+
+      //compute distance from current coodinates to firestore markers
       let distance = window.google.maps.geometry.spherical.computeDistanceBetween(
         fromlocationlatlng,
-        locationlatlng,
-        500
+        locationlatlng
       );
       console.log("Distance fetched", distance);
+      if (distance < 500) {
+        return distance;
+      }
     });
+
+  console.log("Return Markers:", returnMarkers);
 
   // navigator.geolocation.getCurrentPosition(function(position) {
   //   console.log("Latitude is :", position.coords.latitude);
@@ -183,10 +192,10 @@ function Maps() {
         mapContainerClassName="map-container"
       >
         <Circle center={center} radius={10} options={options} />
-        // Filter markers down to vicinity // goes through markers each user and
+        // first returnMarkers checks if there are markers it Filter markers down to vicinity // 2nd returnMarkers.map goes through markers each user and
         puts email lat&long
-        {markers &&
-          markers.map(
+        {returnMarkers &&
+          returnMarkers.map(
             ({
               email,
               latitude,
