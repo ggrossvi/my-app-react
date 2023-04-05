@@ -26,6 +26,16 @@ import {
 } from "firebase/firestore";
 import { logout } from "./firebase";
 import { Avatar } from "@mui/material";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from "@mui/icons-material/Menu";
+import SlidingPane from "react-sliding-pane";
+import "react-sliding-pane/dist/react-sliding-pane.css";
+import Slider from "@mui/material/Slider";
 
 function Home() {
   console.log(`${process.env.REACT_APP_googleMapsApiKey}`);
@@ -60,6 +70,8 @@ function Maps() {
   const navigate = useNavigate();
   const [openInfoWindowMarkerId, setopenInfoWindowMarkerId] = useState("");
   const location = useLocation();
+  const [isPaneOpenLeft, setIsPaneOpenLeft] = useState(false);
+  const [sliderRange, setSliderRange] = useState(500);
 
   useEffect(() => {
     if (clickbutton === true) navigate("/");
@@ -135,7 +147,8 @@ function Maps() {
         locationlatlng
       );
       console.log("Distance fetched", distance);
-      if (distance < 500) {
+      // sets the markers that show up based on what range in slider we select
+      if (distance < sliderRange) {
         return distance;
       }
     });
@@ -161,15 +174,46 @@ function Maps() {
     radius: 600,
     zIndex: 1,
   };
+  // assigning an arrow function to const variable
+  const handleSliderChange = (event, value) => {
+    event.preventDefault();
+    console.log("Event", event.target.value);
+    console.log("Value", value);
+    setSliderRange(value);
+  };
 
   // radius is in meters
   return (
     <div>
-      <h1>
-        Share Location App{" "}
-        <span role="img" aria-label="map">
-          🗺️
-        </span>
+      <Box sx={{ flexGrow: 1 }}>
+        <AppBar position="static">
+          <Toolbar>
+            <IconButton
+              size="large"
+              edge="start"
+              color="inherit"
+              aria-label="menu"
+              sx={{ mr: 2 }}
+              onClick={() => {
+                setIsPaneOpenLeft(true);
+              }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              Share Location App{" "}
+              <span role="img" aria-label="map">
+                🗺️
+              </span>
+            </Typography>
+            <Button color="inherit" onClick={handleOnClick}>
+              Logout
+            </Button>
+          </Toolbar>
+        </AppBar>
+      </Box>
+
+      {/* <h1>
         <button
           onClick={handleOnClick}
           style={{
@@ -180,7 +224,7 @@ function Maps() {
         >
           Logout
         </button>
-      </h1>
+      </h1> */}
       <GoogleMap
         // options = {options}
         id="circle-example"
@@ -192,8 +236,9 @@ function Maps() {
         mapContainerClassName="map-container"
       >
         <Circle center={center} radius={10} options={options} />
-        // first returnMarkers checks if there are markers it Filter markers down to vicinity // 2nd returnMarkers.map goes through markers each user and
-        puts email lat&long
+        // first returnMarkers checks if there are markers it Filter markers
+        down to vicinity // 2nd returnMarkers.map goes through markers each user
+        and puts email lat&long
         {returnMarkers &&
           returnMarkers.map(
             ({
@@ -274,6 +319,24 @@ function Maps() {
           radius={500000}
         />
       </GoogleMap>
+      <SlidingPane
+        closeIcon={<div>Some div containing custom close icon.</div>}
+        isOpen={isPaneOpenLeft}
+        title="Hey, it is optional pane title.  I can be React component too."
+        from="left"
+        width="200px"
+        onRequestClose={() => setIsPaneOpenLeft(false)}
+      >
+        <div>And I am pane content on left.</div>
+        <Slider
+          defaultValue={50}
+          min={500}
+          onChange={handleSliderChange}
+          max={8000}
+          aria-label="Default"
+          valueLabelDisplay="auto"
+        />
+      </SlidingPane>
     </div>
   );
 }
