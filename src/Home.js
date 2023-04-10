@@ -72,6 +72,8 @@ function Maps() {
   const location = useLocation();
   const [isPaneOpenLeft, setIsPaneOpenLeft] = useState(false);
   const [sliderRange, setSliderRange] = useState(500);
+  const [isRightPanelOpen, setIsRightPanelOpen] = useState(false);
+  const [avatarImage, setAvatarImage] = useState("");
 
   useEffect(() => {
     if (clickbutton === true) navigate("/");
@@ -206,6 +208,15 @@ function Maps() {
                 🗺️
               </span>
             </Typography>
+            {/* change width and color */}
+            <Slider
+              defaultValue={50}
+              min={500}
+              onChange={handleSliderChange}
+              max={8000}
+              aria-label="Default"
+              valueLabelDisplay="auto"
+            />
             <Button color="inherit" onClick={handleOnClick}>
               Logout
             </Button>
@@ -299,7 +310,17 @@ function Maps() {
                       ) : (
                         ""
                       )}
-                      {username}
+                      <Button
+                        variant="text"
+                        /* if we click on button we will check whether info window is open -create state set to true if you click  */
+                        onClick={() => {
+                          setIsRightPanelOpen(true);
+                          setAvatarImage(imageUrl);
+                        }}
+                      >
+                        {username}
+                      </Button>
+
                       <br />
                       {/*  location.state exists - not undefined props exist if no props not coming from register page.    */}
                       {location.state ? userStatus : ""}
@@ -327,7 +348,7 @@ function Maps() {
         width="200px"
         onRequestClose={() => setIsPaneOpenLeft(false)}
       >
-        <div>And I am pane content on left.</div>
+        <div>Slide to change the radius.</div>
         <Slider
           defaultValue={50}
           min={500}
@@ -336,6 +357,15 @@ function Maps() {
           aria-label="Default"
           valueLabelDisplay="auto"
         />
+      </SlidingPane>
+      <SlidingPane
+        closeIcon={<div>User Information</div>}
+        isOpen={isRightPanelOpen}
+        title="User Information"
+        width="30%"
+        onRequestClose={() => setIsRightPanelOpen(false)}
+      >
+        <Avatar alt="profile picture" src={avatarImage} />
       </SlidingPane>
     </div>
   );
