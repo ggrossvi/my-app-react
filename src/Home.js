@@ -74,6 +74,9 @@ function Maps() {
   const [sliderRange, setSliderRange] = useState(500);
   const [isRightPanelOpen, setIsRightPanelOpen] = useState(false);
   const [avatarImage, setAvatarImage] = useState("");
+  const [username, setUsername] = useState("");
+  const [userStatus, setUserStatus] = useState("");
+  const [userDescription, setUserDescription] = useState("");
 
   useEffect(() => {
     if (clickbutton === true) navigate("/");
@@ -314,6 +317,9 @@ function Maps() {
                         variant="text"
                         /* if we click on button we will check whether info window is open -create state set to true if you click  */
                         onClick={() => {
+                          setUsername(username);
+                          setUserDescription(userDescription);
+                          setUserStatus(userStatus);
                           setIsRightPanelOpen(true);
                           setAvatarImage(imageUrl);
                         }}
@@ -365,7 +371,17 @@ function Maps() {
         width="30%"
         onRequestClose={() => setIsRightPanelOpen(false)}
       >
-        <Avatar alt="profile picture" src={avatarImage} />
+        <Avatar
+          alt="profile picture"
+          sx={{ width: 200, height: 200, margin: "auto" }}
+          src={avatarImage}
+        />
+        <br></br>
+        <h1>{username}</h1>
+        <br></br>
+        <h1>{userStatus}</h1>
+        <br></br>
+        <h1>{userDescription}</h1>
       </SlidingPane>
     </div>
   );
