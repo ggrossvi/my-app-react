@@ -308,8 +308,13 @@ function Maps() {
                       {/* if exists return latitude and if not set to 0.0 */}
                       {/* {latitude?latitude:0.0}, {longitude?longitude:0.0} */}
 
+                      {/* avatar component is part of mui sx(property) takes value in the form of json object */}
                       {location.state ? (
-                        <Avatar alt="profile picture" src={imageUrl} />
+                        <Avatar
+                          alt="profile picture"
+                          src={imageUrl}
+                          sx={{ margin: "auto" }}
+                        />
                       ) : (
                         ""
                       )}
@@ -347,6 +352,7 @@ function Maps() {
         />
       </GoogleMap>
       <SlidingPane
+        className="slider-style"
         closeIcon={<div>Some div containing custom close icon.</div>}
         isOpen={isPaneOpenLeft}
         title="Hey, it is optional pane title.  I can be React component too."
@@ -365,6 +371,7 @@ function Maps() {
         />
       </SlidingPane>
       <SlidingPane
+        className="slider-style"
         closeIcon={<div>User Information</div>}
         isOpen={isRightPanelOpen}
         title="User Information"
@@ -377,11 +384,11 @@ function Maps() {
           src={avatarImage}
         />
         <br></br>
-        <h1>{username}</h1>
+        <h1 className="slider-text">{username}</h1>
         <br></br>
-        <h1>{userStatus}</h1>
+        <h1 className="slider-text">{userStatus}</h1>
         <br></br>
-        <h1>{userDescription}</h1>
+        <h1 className="slider-text">{userDescription}</h1>
       </SlidingPane>
     </div>
   );
