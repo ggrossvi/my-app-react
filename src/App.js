@@ -10,6 +10,8 @@ import Register from "./register";
 import Reset from "./reset";
 // import Dashboard from "./dashboard";
 import Home from "./Home";
+import CalendarScheduler from "./CalendarScheduler";
+
 console.log(process.env.REACT_APP_API_KEY);
 
 function App() {
@@ -21,7 +23,8 @@ function App() {
           <Route exact path="/register" element={<Register />} />
           <Route exact path="/reset" element={<Reset />} />
           <Route exact path="/dashboard" element={<Home />} />
-          <Route exact path="/profile" element={<CardProfile/>} />
+          <Route exact path="/profile" element={<CardProfile />} />
+          <Route exact path="/calendar" element={<CalendarScheduler/>} />
         </Routes>
       </Router>
     </div>

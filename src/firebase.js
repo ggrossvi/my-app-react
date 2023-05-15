@@ -198,7 +198,7 @@ function getSepcificDataWithID() {
     });
 }
 
-function getAlldata() {
+function GetAlldata() {
   const [fire, setFire] = useState([]);
   locationmap.length = 0;
   getDocs(collection(db, databaseCollection)).then((docSnap) => {
@@ -222,7 +222,7 @@ export {
   registerWithEmailAndPassword,
   sendPasswordReset,
   logout,
-  getAlldata,
+  GetAlldata,
   updateUserProfile,
 };
 export const storage = getStorage(app);

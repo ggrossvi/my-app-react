@@ -8,10 +8,12 @@ import { usePosition } from "use-position";
 import { InfoWindow } from "@react-google-maps/api";
 import { Circle } from "@react-google-maps/api";
 import update from "./firebase";
-import { getAlldata } from "./firebase";
+import { GetAlldata } from "./firebase";
 import { databaseCollection } from "./constants";
 import { initializeApp } from "firebase/app";
 import { useNavigate } from "react-router-dom";
+import { Scheduler } from "@aldabil/react-scheduler";
+import { EVENTS } from "./Events";
 import {
   getFirestore,
   query,
@@ -36,6 +38,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import SlidingPane from "react-sliding-pane";
 import "react-sliding-pane/dist/react-sliding-pane.css";
 import Slider from "@mui/material/Slider";
+import CalendarScheduler from "./CalendarScheduler";
 
 function Home() {
   console.log(`${process.env.REACT_APP_googleMapsApiKey}`);
@@ -77,10 +80,12 @@ function Maps() {
   const [username, setUsername] = useState("");
   const [userStatus, setUserStatus] = useState("");
   const [userDescription, setUserDescription] = useState("");
+  const [calendarOpened, setCalendarOpened] = useState(false);
 
   useEffect(() => {
     if (clickbutton === true) navigate("/");
-  }, [clickbutton]);
+    if (calendarOpened === true) navigate("/calendar");
+  }, [clickbutton, calendarOpened]);
 
   const handleOnClick = () => {
     logout();
@@ -147,10 +152,11 @@ function Maps() {
       );
 
       //compute distance from current coodinates to firestore markers
-      let distance = window.google.maps.geometry.spherical.computeDistanceBetween(
-        fromlocationlatlng,
-        locationlatlng
-      );
+      let distance =
+        window.google.maps.geometry.spherical.computeDistanceBetween(
+          fromlocationlatlng,
+          locationlatlng
+        );
       console.log("Distance fetched", distance);
       // sets the markers that show up based on what range in slider we select
       if (distance < sliderRange) {
@@ -351,6 +357,7 @@ function Maps() {
           radius={500000}
         />
       </GoogleMap>
+
       <SlidingPane
         className="slider-style"
         closeIcon={<div>Some div containing custom close icon.</div>}
@@ -389,7 +396,19 @@ function Maps() {
         <h1 className="slider-text">{userStatus}</h1>
         <br></br>
         <h1 className="slider-text">{userDescription}</h1>
+        <br></br>
+
+        <button
+          onClick={() => {
+            setCalendarOpened(!calendarOpened);
+          }}
+        >
+          Calendar
+        </button>
       </SlidingPane>
+
+      {/* if calendar Opened is true then it shows calendar */}
+      {calendarOpened && <CalendarScheduler></CalendarScheduler>}
     </div>
   );
 }
