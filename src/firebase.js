@@ -177,15 +177,52 @@ function updateUserProfile(userStatus, userDescription, email, url) {
   }
 }
 
-function getSepcificDataWithID() {
-  getDoc(doc(db, databaseCollection, "zADXQKcjaLlMygyyafHP"))
+function getUserdataWithID(email, event) {
+  if (email) {
+    getDoc(doc(db, databaseCollection, email), {
+      /* this function gets called from calendar component use effect (1st one that gets invoked before the page get loaded) hook before component is loaded and will return events for particular email */
+    })
+      .then(() => {
+        // Data saved successfully!
+        console.log("data updated");
+      })
+      .catch((error) => {
+        // The write failed...
+        console.log(error);
+      });
+  }
+}
+
+function updateUserProfileCalendarEvent(event, email) {
+  if (email) {
+    updateDoc(doc(db, databaseCollection, email), {
+      userEventTitle: event.title,
+      userEventID: event.event_id,
+      userEventStart: event.start,
+      userEventEnd: event.end,
+    })
+      .then(() => {
+        // Data saved successfully!
+        console.log("data updated");
+      })
+      .catch((error) => {
+        // The write failed...
+        console.log(error);
+      });
+  }
+}
+// fetch the events that are specific to the user with this email
+function getSpecificDataWithID(email, setUserFirebaseEvent) {
+  getDoc(doc(db, databaseCollection, email))
     .then((docData) => {
       // Data saved successfully!
 
       if (docData.exists()) {
         // console.log(docData.data());
-        console.log(docData.data().username);
-        console.log(docData.data().email);
+        // firebase is filling in the setUserFirebaseEvent setUserFirebase Event contains the event data
+        setUserFirebaseEvent(docData.data());
+        console.log("data:", docData.data());
+
         // setName(docData.data().username);
         // setEmail(docData.data().email);
       } else {
@@ -224,5 +261,7 @@ export {
   logout,
   GetAlldata,
   updateUserProfile,
+  updateUserProfileCalendarEvent,
+  getSpecificDataWithID,
 };
 export const storage = getStorage(app);

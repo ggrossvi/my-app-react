@@ -60,6 +60,8 @@ function Home() {
 function PopulateLocationInformation(latitude, longitude) {
   // useLocation fetches props from Login page use this because different from when using with component because using within navigation Use position gives coordinates, UseLocation access the parameter is grabbed from navigation hook
 
+  /* fetching user email */
+
   const location = useLocation();
   if (location.state) {
     console.log(location.state.user_email, "This is location info");
@@ -82,9 +84,14 @@ function Maps() {
   const [userDescription, setUserDescription] = useState("");
   const [calendarOpened, setCalendarOpened] = useState(false);
 
+  /* need pass the email to the calendar scheduler component because it is going to another page */
   useEffect(() => {
     if (clickbutton === true) navigate("/");
-    if (calendarOpened === true) navigate("/calendar");
+    if (calendarOpened === true) navigate("/calendar",{
+          state: {
+            user_email: location.state.user_email,
+          },
+        })
   }, [clickbutton, calendarOpened]);
 
   const handleOnClick = () => {
@@ -172,6 +179,10 @@ function Maps() {
   // });
 
   //  this.setSelected({ lat: parseFloat(latitude), lng: parseFloat(longitude)});
+  const handleOnClickLogin=()=>{
+    navigate("/");
+  };
+
   const options = {
     strokeColor: "#FF0000",
     strokeOpacity: 0.8,
@@ -192,7 +203,10 @@ function Maps() {
     console.log("Value", value);
     setSliderRange(value);
   };
-
+  const emailProp = useLocation();
+  if (emailProp.state) {
+    console.log(emailProp.state.user_email, "This is email info");
+  }
   // radius is in meters
   return (
     <div>
@@ -226,9 +240,16 @@ function Maps() {
               aria-label="Default"
               valueLabelDisplay="auto"
             />
-            <Button color="inherit" onClick={handleOnClick}>
-              Logout
-            </Button>
+            {location.state ? (
+              <Button color="inherit" onClick={handleOnClick}>
+                Logout
+              </Button>
+            ) : 
+            (
+              <Button color="inherit" onClick={handleOnClickLogin}>
+                Login
+              </Button>
+            )}
           </Toolbar>
         </AppBar>
       </Box>
@@ -315,6 +336,7 @@ function Maps() {
                       {/* {latitude?latitude:0.0}, {longitude?longitude:0.0} */}
 
                       {/* avatar component is part of mui sx(property) takes value in the form of json object */}
+                      {/* location.state says if user is loged in */}
                       {location.state ? (
                         <Avatar
                           alt="profile picture"
@@ -326,6 +348,7 @@ function Maps() {
                       )}
                       <Button
                         variant="text"
+                        disabled={location.state ? false : true}
                         /* if we click on button we will check whether info window is open -create state set to true if you click  */
                         onClick={() => {
                           setUsername(username);
@@ -408,7 +431,7 @@ function Maps() {
       </SlidingPane>
 
       {/* if calendar Opened is true then it shows calendar */}
-      {calendarOpened && <CalendarScheduler></CalendarScheduler>}
+      {calendarOpened && <CalendarScheduler userEmail={emailProp.state.user_email}></CalendarScheduler>}
     </div>
   );
 }
