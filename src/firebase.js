@@ -131,6 +131,7 @@ function Create(username, email, userDescription, status) {
     userDescription: "",
     status: "",
     imageUrl: "",
+    events: [], // so more than one can be added
   })
     .then(() => {
       // Data saved successfully!
@@ -192,25 +193,46 @@ function getUserdataWithID(email, event) {
       });
   }
 }
-
+// create event in calendar, pass event into updateUser..., append latest event to the existing event
 function updateUserProfileCalendarEvent(event, email) {
-  if (email) {
-    updateDoc(doc(db, databaseCollection, email), {
-      userEventTitle: event.title,
-      userEventID: event.event_id,
-      userEventStart: event.start,
-      userEventEnd: event.end,
+  //need to do a call to get previous data
+  getDoc(doc(db, databaseCollection, email))
+    .then((docData) => {
+      // Data saved successfully!
+
+      if (docData.exists()) {
+        let userData = docData.data();
+        let newEvent = {
+          userEventTitle: event.title,
+          userEventID: event.event_id,
+          userEventStart: event.start,
+          userEventEnd: event.end,
+        };
+        // the spread operator appends the newEvent after the comma within the array
+        let updatedEvents = [...userData.events, newEvent];
+        if (email) {
+          updateDoc(doc(db, databaseCollection, email), {
+            events: updatedEvents,
+          })
+            .then(() => {
+              // Data saved successfully!
+              console.log("data updated");
+            })
+            .catch((error) => {
+              // The write failed...
+              console.log(error);
+            });
+        } else {
+          console.log("No such data!");
+        }
+      }
     })
-      .then(() => {
-        // Data saved successfully!
-        console.log("data updated");
-      })
-      .catch((error) => {
-        // The write failed...
-        console.log(error);
-      });
-  }
+    .catch((error) => {
+      // The write failed...
+      console.log(error);
+    });
 }
+
 // fetch the events that are specific to the user with this email
 function getSpecificDataWithID(email, setUserFirebaseEvent) {
   getDoc(doc(db, databaseCollection, email))
