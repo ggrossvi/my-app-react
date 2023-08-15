@@ -53,7 +53,7 @@ function CalendarScheduler() {
 
   const returnEvents = () => {
     let myObject = [{}];
-    if (userFirebaseEvent) {
+    if (userFirebaseEvent && userFirebaseEvent.events[0]) {
       console.log("UserFirebaseEvent:", userFirebaseEvent);
       const endDate = new Date(userFirebaseEvent.userEventEnd.seconds * 1000);
       const startDate = new Date(
@@ -96,6 +96,8 @@ function CalendarScheduler() {
 
       console.log("data:", newmyObject);
       return newmyObject;
+    } else {
+      return [];
     }
   };
   return (
