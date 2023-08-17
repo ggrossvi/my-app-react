@@ -53,49 +53,53 @@ function CalendarScheduler() {
 
   const returnEvents = () => {
     let myObject = [{}];
+    var arr = [];
+    // first one checks that is not null and there is a first element
     if (userFirebaseEvent && userFirebaseEvent.events[0]) {
-      console.log("UserFirebaseEvent:", userFirebaseEvent);
-      const endDate = new Date(userFirebaseEvent.userEventEnd.seconds * 1000);
-      const startDate = new Date(
-        userFirebaseEvent.userEventStart.seconds * 1000
-      );
-      console.log("End Date:", endDate);
-      // in javascript to make a number instead of string append 1 in front of number
-      const adjustStartMonth = +startDate.getMonth() + +1;
-      const adjustEndMonth = +endDate.getMonth() + +1;
-      const formattedEndDate =
-        endDate.getFullYear() +
-        " " +
-        adjustEndMonth +
-        " " +
-        endDate.getDate() +
-        " " +
-        endDate.getHours() +
-        ":" +
-        endDate.getMinutes();
+      userFirebaseEvent.events.map((event, index) => {
+        console.log("Event Array:", event);
 
-      const formattedStartDate =
-        startDate.getFullYear() +
-        " " +
-        adjustStartMonth +
-        " " +
-        startDate.getDate() +
-        " " +
-        startDate.getHours() +
-        ":" +
-        startDate.getMinutes();
+        console.log("UserFirebaseEvent:", userFirebaseEvent);
+        const endDate = new Date(event.userEventEnd.seconds * 1000);
+        const startDate = new Date(event.userEventStart.seconds * 1000);
+        console.log("End Date:", endDate);
+        // in javascript to make a number instead of string append 1 in front of number
+        const adjustStartMonth = +startDate.getMonth() + +1;
+        const adjustEndMonth = +endDate.getMonth() + +1;
+        const formattedEndDate =
+          endDate.getFullYear() +
+          " " +
+          adjustEndMonth +
+          " " +
+          endDate.getDate() +
+          " " +
+          endDate.getHours() +
+          ":" +
+          endDate.getMinutes();
 
-      let newmyObject = [
-        {
-          end: new Date(formattedEndDate),
-          start: new Date(formattedStartDate),
-          event_id: "1",
-          title: userFirebaseEvent.userEventTitle,
-        },
-      ];
+        const formattedStartDate =
+          startDate.getFullYear() +
+          " " +
+          adjustStartMonth +
+          " " +
+          startDate.getDate() +
+          " " +
+          startDate.getHours() +
+          ":" +
+          startDate.getMinutes();
 
-      console.log("data:", newmyObject);
-      return newmyObject;
+        let newmyObject = [
+          {
+            end: new Date(formattedEndDate),
+            start: new Date(formattedStartDate),
+            event_id: "1",
+            title: event.userEventTitle,
+          },
+        ];
+        arr = [...arr, newmyObject[0]];
+      });
+
+      return arr;
     } else {
       return [];
     }
