@@ -110,7 +110,15 @@ function CalendarScheduler() {
         <Scheduler
           view="week"
           events={returnEvents()}
-          selectedDate={new Date(2023, 7, 4)}
+          selectedDate={
+            new Date(
+              new Date().getFullYear() +
+                "," +
+                (new Date().getMonth() + +1) +
+                "," +
+                new Date().getDate()
+            )
+          }
           onConfirm={handleConfirm}
         />
       ) : null}
