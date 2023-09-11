@@ -83,15 +83,19 @@ function Maps() {
   const [userStatus, setUserStatus] = useState("");
   const [userDescription, setUserDescription] = useState("");
   const [calendarOpened, setCalendarOpened] = useState(false);
+  const [userEmailCalendar, setUserEmailCalendar] = useState("");
 
   /* need pass the email to the calendar scheduler component because it is going to another page */
   useEffect(() => {
     if (clickbutton === true) navigate("/");
-    if (calendarOpened === true) navigate("/calendar",{
-          state: {
-            user_email: location.state.user_email,
-          },
-        })
+    if (calendarOpened === true)
+      navigate("/calendar", {
+        state: {
+          //if(userEmailCalender){user_email:userEmailCalender}
+          //else user_email:location.state.user_email
+          user_email: userEmailCalendar || location.state.user_email,
+        },
+      });
   }, [clickbutton, calendarOpened]);
 
   const handleOnClick = () => {
@@ -179,7 +183,7 @@ function Maps() {
   // });
 
   //  this.setSelected({ lat: parseFloat(latitude), lng: parseFloat(longitude)});
-  const handleOnClickLogin=()=>{
+  const handleOnClickLogin = () => {
     navigate("/");
   };
 
@@ -244,8 +248,7 @@ function Maps() {
               <Button color="inherit" onClick={handleOnClick}>
                 Logout
               </Button>
-            ) : 
-            (
+            ) : (
               <Button color="inherit" onClick={handleOnClickLogin}>
                 Login
               </Button>
@@ -351,6 +354,7 @@ function Maps() {
                         disabled={location.state ? false : true}
                         /* if we click on button we will check whether info window is open -create state set to true if you click  */
                         onClick={() => {
+                          setUserEmailCalendar(email);
                           setUsername(username);
                           setUserDescription(userDescription);
                           setUserStatus(userStatus);
@@ -431,7 +435,11 @@ function Maps() {
       </SlidingPane>
 
       {/* if calendar Opened is true then it shows calendar */}
-      {calendarOpened && <CalendarScheduler userEmail={emailProp.state.user_email}></CalendarScheduler>}
+      {calendarOpened && (
+        <CalendarScheduler
+          userEmail={emailProp.state.user_email}
+        ></CalendarScheduler>
+      )}
     </div>
   );
 }
