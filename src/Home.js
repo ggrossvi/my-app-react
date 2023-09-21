@@ -313,10 +313,17 @@ function Maps() {
                     );
                     console.log(selected);
                   }}
-                  icon={{
-                    url: "/personicon.png",
-                    scaledSize: new window.google.maps.Size(25, 25),
-                  }}
+                  icon={
+                    location.state.user_email == email
+                      ? {
+                          url: "/current_user.png",
+                          scaledSize: new window.google.maps.Size(25, 25),
+                        }
+                      : {
+                          url: "/other_user.png",
+                          scaledSize: new window.google.maps.Size(25, 25),
+                        }
+                  }
                 />
                 {/* set to true for the marker selected through email id Edit /toggle block comment */}
                 {openInfoWindowMarkerId === email && (
