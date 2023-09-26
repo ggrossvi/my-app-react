@@ -174,6 +174,27 @@ function Maps() {
         return distance;
       }
     });
+  let minDistance = Number.MAX_VALUE;
+  markers.forEach((markers) => {
+    var locationlatlng = new window.google.maps.LatLng(
+      markers.latitude,
+      markers.longitude
+    );
+    console.log("location latlng:", locationlatlng);
+    // current coordinates
+    var fromlocationlatlng = new window.google.maps.LatLng(latitude, longitude);
+
+    //compute distance from current coodinates to firestore markers
+    let distance = window.google.maps.geometry.spherical.computeDistanceBetween(
+      fromlocationlatlng,
+      locationlatlng
+    );
+    console.log("Distance fetched", distance);
+    // sets the markers that show up based on what range in slider we select
+    if (distance < minDistance) {
+      minDistance = distance;
+    }
+  });
 
   console.log("Return Markers:", returnMarkers);
 
@@ -211,6 +232,17 @@ function Maps() {
   if (emailProp.state) {
     console.log(emailProp.state.user_email, "This is email info");
   }
+  const calculateZoomLevel = () => {
+    if (minDistance < 1) {
+      return 17;
+    }
+    if (minDistance < 2 && minDistance > 1) {
+      return 13;
+    }
+    if (minDistance > 2 && minDistance < 3) {
+      return 12;
+    }
+  };
   // radius is in meters
   return (
     <div>
@@ -272,7 +304,7 @@ function Maps() {
       <GoogleMap
         // options = {options}
         id="circle-example"
-        zoom={12}
+        zoom={calculateZoomLevel()}
         center={{
           lat: parseFloat(latitude),
           lng: parseFloat(longitude),
