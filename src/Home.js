@@ -103,6 +103,7 @@ function Maps() {
         state: {
           //if(userEmailCalender){user_email:userEmailCalender}
           //else user_email:location.state.user_email
+          // useEmailCalendar is other person and location.stat.user_email is logged in person
           user_email: userEmailCalendar || location.state.user_email,
         },
       });
@@ -259,6 +260,11 @@ function Maps() {
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
+  const handleCalendarOpen = (event) => {
+    setCalendarOpened(true);
+  };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -310,7 +316,7 @@ function Maps() {
                 >
                   <Typography sx={{ minWidth: 100 }}>Contact</Typography>
                   <Typography sx={{ minWidth: 100 }}>Profile</Typography>
-                  <Tooltip title="Account settings">
+                  <Tooltip title="accountSetting">
                     <IconButton
                       onClick={handleClick}
                       size="small"
@@ -371,11 +377,11 @@ function Maps() {
                     </ListItemIcon>
                     Add another account
                   </MenuItem>
-                  <MenuItem onClick={handleClose}>
+                  <MenuItem onClick={handleCalendarOpen}>
                     <ListItemIcon>
                       <Settings fontSize="small" />
                     </ListItemIcon>
-                    Settings
+                    Calendar
                   </MenuItem>
                   <MenuItem onClick={handleOnClick}>
                     <ListItemIcon>

@@ -7,6 +7,7 @@ import {
   updateUserProfileCalendarEvent,
 } from "./firebase";
 import { useLocation } from "react-router-dom";
+import { green, yellow } from "@mui/material/colors";
 
 /* 
 if no curly braces use same name - it is an object then you say userEmail.name, UserEmail.email
@@ -87,6 +88,16 @@ function CalendarScheduler() {
           startDate.getHours() +
           ":" +
           startDate.getMinutes();
+        // if event.isEventApproved == undefined is true then set to false else set to event.isEventApproved
+        const isEventApproved =
+          event.isEventApproved == undefined ? false : event.isEventApproved;
+        let color = "#0000FF";
+
+        if (isEventApproved == true) {
+          color = "#22bf5c";
+        } else {
+          color = "#0000FF";
+        }
 
         let newmyObject = [
           {
@@ -94,6 +105,7 @@ function CalendarScheduler() {
             start: new Date(formattedStartDate),
             event_id: "1",
             title: event.userEventTitle,
+            color: color,
           },
         ];
         arr = [...arr, newmyObject[0]];
