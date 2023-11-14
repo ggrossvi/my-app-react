@@ -207,6 +207,7 @@ function updateUserProfileCalendarEvent(event, email) {
           userEventID: event.event_id,
           userEventStart: event.start,
           userEventEnd: event.end,
+          isEventApproved: false,
         };
         // the spread operator appends the newEvent after the comma within the array
         let updatedEvents = [...userData.events, newEvent];
