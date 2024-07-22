@@ -49,6 +49,7 @@ import Tooltip from "@mui/material/Tooltip";
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
+import { ResetTvRounded } from "@mui/icons-material";
 
 function Home() {
   console.log(`${process.env.REACT_APP_googleMapsApiKey}`);
@@ -245,7 +246,7 @@ function Maps() {
   }
   const calculateZoomLevel = () => {
     if (minDistance < 1) {
-      return 17;
+      return 15;
     }
     if (minDistance < 2 && minDistance > 1) {
       return 13;
@@ -269,6 +270,19 @@ function Maps() {
     setAnchorEl(null);
   };
   // radius is in meters
+
+  const fetchImageUrl = () => {
+    console.log("returnMarkers=", returnMarkers);
+    if (returnMarkers) {
+      const result = returnMarkers.find(
+        (marker) => marker.email == location.state.user_email
+      );
+      console.log("Markers object of user", result);
+      return result && result.imageUrl ? result.imageUrl : null;
+    }
+    return null;
+  };
+
   return (
     <div>
       <Box sx={{ flexGrow: 1 }}>
@@ -325,7 +339,10 @@ function Maps() {
                       aria-haspopup="true"
                       aria-expanded={open ? "true" : undefined}
                     >
-                      <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+                      <Avatar
+                        sx={{ width: 40, height: 40, margin: "auto" }}
+                        src={fetchImageUrl() ? fetchImageUrl() : " "}
+                      ></Avatar>
                     </IconButton>
                   </Tooltip>
                 </Box>
@@ -365,7 +382,10 @@ function Maps() {
                   anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
                 >
                   <MenuItem onClick={handleClose}>
-                    <Avatar /> Profile
+                    <Avatar
+                      src={fetchImageUrl() ? fetchImageUrl() : " "}
+                    ></Avatar>{" "}
+                    Profile
                   </MenuItem>
                   <MenuItem onClick={handleClose}>
                     <Avatar /> My account
@@ -457,6 +477,8 @@ function Maps() {
                     console.log(selected);
                   }}
                   icon={
+                    location.state.user_email != null &&
+                    email != null &&
                     location.state.user_email === email
                       ? {
                           url: "/current_user.png",
