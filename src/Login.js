@@ -1,23 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { auth, logInWithEmailAndPassword, signInWithGoogle } from "./firebase";
+//import { auth, logInWithEmailAndPassword, signInWithGoogle } from "./firebase";
+import { auth, signInWithGoogle } from "./firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import "./Login.css";
+import { logInWithEmailAndPassword } from "./serviceRequest";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [user, loading, error] = useAuthState(auth);
+  const [UserResponse, setUserResponse] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (loading) {
+    if (UserResponse == null || UserResponse == undefined) {
       // maybe trigger a loading screen
       return;
     }
     // passing user info to dashboard
-    if (user) navigate("/dashboard", { state: { user_email: email } });
-  }, [user, loading]);
+    if (UserResponse) navigate("/dashboard", { state: { user_email: email } });
+  }, [UserResponse]);
+
+  const invokeLogin = async (email, password) => {
+    const response = await logInWithEmailAndPassword(email, password);
+    setUserResponse(response);
+  };
 
   return (
     <div className="login">
@@ -38,7 +46,7 @@ function Login() {
         />
         <button
           className="login__btn"
-          onClick={() => logInWithEmailAndPassword(email, password)}
+          onClick={() => invokeLogin(email, password)}
         >
           Login
         </button>

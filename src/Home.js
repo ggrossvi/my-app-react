@@ -7,8 +7,7 @@ import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
 import { usePosition } from "use-position";
 import { InfoWindow } from "@react-google-maps/api";
 import { Circle } from "@react-google-maps/api";
-import update from "./firebase";
-import { GetAlldata } from "./firebase";
+
 import { databaseCollection } from "./constants";
 import { initializeApp } from "firebase/app";
 import { useNavigate } from "react-router-dom";
@@ -50,6 +49,7 @@ import PersonAdd from "@mui/icons-material/PersonAdd";
 import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
 import { ResetTvRounded } from "@mui/icons-material";
+import { fetchUserMarkers, updateLocation } from "./serviceRequest";
 
 function Home() {
   console.log(`${process.env.REACT_APP_googleMapsApiKey}`);
@@ -76,9 +76,13 @@ function PopulateLocationInformation(latitude, longitude) {
   const location = useLocation();
   if (location.state) {
     console.log(location.state.user_email, "This is location info");
-    update(latitude, longitude, location.state.user_email);
+    updateLocation(location.state.user_email,longitude,latitude).then((data)=>{
+      //
+    });
   }
 }
+
+
 
 function Maps() {
   const [selected, setSelected] = useState(null);
@@ -140,22 +144,32 @@ function Maps() {
   };
 
   // get coordinates in array
-  const [markers, setFire] = useState([]);
+  const [markers, setMarkers] = useState([]);
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
   var locationmap = [];
   useEffect(() => {
-    const docs = getDocs(collection(db, databaseCollection)).then((docSnap) => {
+
+
+      /*
+      const docs = getDocs(collection(db, databaseCollection)).then((docSnap) => {
       docSnap.forEach((doc) => {
         locationmap.push({ ...doc.data(), id: doc.id });
       });
+      */
+
+      fetchUserMarkers().then((markersList) => {
+        setMarkers(markersList);
+        console.log("fireeeee", markers);
+      });
+
+      
       // setFire stores data in the markers
-      setFire(locationmap);
+      //setMarkers(locationmap);
 
       //return locationmap;
-      console.log("fireeeee", markers);
-    });
-  }, []);
+          },[]);
+ 
 
   console.log("locationCoordinates:", markers);
 

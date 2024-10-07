@@ -68,38 +68,40 @@ const signInWithGoogle = async () => {
   }
 };
 
-const logInWithEmailAndPassword = async (email, password) => {
+/* const logInWithEmailAndPassword = async (email, password) => {
   try {
     await signInWithEmailAndPassword(auth, email, password);
   } catch (err) {
     console.error(err);
     alert(err.message);
   }
-};
+}; */
 
-const registerWithEmailAndPassword = async (
-  name,
-  email,
-  password,
-  status,
-  userDescription
-) => {
-  try {
-    const res = await createUserWithEmailAndPassword(auth, email, password);
-    const user = res.user;
-    await addDoc(collection(db, "users"), {
-      uid: user.uid,
-      name,
-      authProvider: "local",
-      email,
-    });
-    Create(name, email, status, userDescription);
-    // getSepcificDataWithID();
-  } catch (err) {
-    console.error(err);
-    alert(err.message);
-  }
-};
+
+// create document in firebase
+// const registerWithEmailAndPassword = async (
+//   name,
+//   email,
+//   password,
+//   status,
+//   userDescription
+// ) => {
+//   try {
+//     const res = await createUserWithEmailAndPassword(auth, email, password);
+//     const user = res.user;
+//     await addDoc(collection(db, "users"), {
+//       uid: user.uid,
+//       name,
+//       authProvider: "local",
+//       email,
+//     });
+//     Create(name, email, status, userDescription);
+//     // getSepcificDataWithID();
+//   } catch (err) {
+//     console.error(err);
+//     alert(err.message);
+//   }
+// };
 
 const sendPasswordReset = async (email) => {
   try {
@@ -121,44 +123,44 @@ const [longitude, setLong] = useState("");
 const [latitude, setLat] = useState("");
 */
 
-function Create(username, email, userDescription, status) {
-  setDoc(doc(db, databaseCollection, email), {
-    username: username,
-    email: email,
-    // initialize to zero start
-    longitude: 0.0,
-    latitude: 0.0,
-    userDescription: "",
-    status: "",
-    imageUrl: "",
-    events: [], // so more than one can be added
-  })
-    .then(() => {
-      // Data saved successfully!
-      console.log("data submitted");
-    })
-    .catch((error) => {
-      // The write failed...
-      console.log(error);
-    });
-}
+// function Create(username, email, userDescription, status) {
+//   setDoc(doc(db, databaseCollection, email), {
+//     username: username,
+//     email: email,
+//     // initialize to zero start
+//     longitude: 0.0,
+//     latitude: 0.0,
+//     userDescription: "",
+//     status: "",
+//     imageUrl: "",
+//     events: [], // so more than one can be added
+//   })
+//     .then(() => {
+//       // Data saved successfully!
+//       console.log("data submitted");
+//     })
+//     .catch((error) => {
+//       // The write failed...
+//       console.log(error);
+//     });
+// }
 
-export default function Update(latitude, longitude, email) {
-  if (email && longitude && latitude) {
-    updateDoc(doc(db, databaseCollection, email), {
-      longitude: longitude,
-      latitude: latitude,
-    })
-      .then(() => {
-        // Data saved successfully!
-        console.log("data updated");
-      })
-      .catch((error) => {
-        // The write failed...
-        console.log(error);
-      });
-  }
-}
+// export default function Update(latitude, longitude, email) {
+//   if (email && longitude && latitude) {
+//     updateDoc(doc(db, databaseCollection, email), {
+//       longitude: longitude,
+//       latitude: latitude,
+//     })
+//       .then(() => {
+//         // Data saved successfully!
+//         console.log("data updated");
+//       })
+//       .catch((error) => {
+//         // The write failed...
+//         console.log(error);
+//       });
+//   }
+// }
 // if you use export default you can only use one export default function in a file
 function updateUserProfile(userStatus, userDescription, email, url) {
   if (email) {
@@ -178,21 +180,21 @@ function updateUserProfile(userStatus, userDescription, email, url) {
   }
 }
 
-function getUserdataWithID(email, event) {
-  if (email) {
-    getDoc(doc(db, databaseCollection, email), {
-      /* this function gets called from calendar component use effect (1st one that gets invoked before the page get loaded) hook before component is loaded and will return events for particular email */
-    })
-      .then(() => {
-        // Data saved successfully!
-        console.log("data updated");
-      })
-      .catch((error) => {
-        // The write failed...
-        console.log(error);
-      });
-  }
-}
+// function getUserdataWithID(email, event) {
+//   if (email) {
+//     getDoc(doc(db, databaseCollection, email), {
+//       /* this function gets called from calendar component use effect (1st one that gets invoked before the page get loaded) hook before component is loaded and will return events for particular email */
+//     })
+//       .then(() => {
+//         // Data saved successfully!
+//         console.log("data updated");
+//       })
+//       .catch((error) => {
+//         // The write failed...
+//         console.log(error);
+//       });
+//   }
+// }
 // create event in calendar, pass event into updateUser..., append latest event to the existing event
 function updateUserProfileCalendarEvent(event, email) {
   //need to do a call to get previous data
@@ -258,31 +260,31 @@ function getSpecificDataWithID(email, setUserFirebaseEvent) {
     });
 }
 
-function GetAlldata() {
-  const [fire, setFire] = useState([]);
-  locationmap.length = 0;
-  getDocs(collection(db, databaseCollection)).then((docSnap) => {
-    docSnap.forEach((doc) => {
-      locationmap.push({ ...doc.data(), id: doc.id });
-      // setting locationmap into the state
-    });
+// function GetAlldata() {
+//   const [fire, setFire] = useState([]);
+//   locationmap.length = 0;
+//   getDocs(collection(db, databaseCollection)).then((docSnap) => {
+//     docSnap.forEach((doc) => {
+//       locationmap.push({ ...doc.data(), id: doc.id });
+//       // setting locationmap into the state
+//     });
 
-    setFire(locationmap);
-    console.log("Document data:", fire);
-  });
-  // return the updated variable
-  return fire;
-}
+//     setFire(locationmap);
+//     console.log("Document data:", fire);
+//   });
+//   // return the updated variable
+//   return fire;
+// }
 
 export {
   auth,
   db,
   signInWithGoogle,
-  logInWithEmailAndPassword,
-  registerWithEmailAndPassword,
+  //logInWithEmailAndPassword, // using backend
+  //registerWithEmailAndPassword,
   sendPasswordReset,
   logout,
-  GetAlldata,
+  //GetAlldata,
   updateUserProfile,
   updateUserProfileCalendarEvent,
   getSpecificDataWithID,
