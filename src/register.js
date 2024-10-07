@@ -3,22 +3,27 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { Link, useNavigate } from "react-router-dom";
 import {
   auth,
-  registerWithEmailAndPassword,
   signInWithGoogle,
 } from "./firebase";
 import "./register.css";
+import { registerWithEmailAndPassword } from "./serviceRequest";
 
 function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
   const [user, loading, error] = useAuthState(auth);
   // built in function
   const navigate = useNavigate();
 
   const register = () => {
     if (!name) alert("Please enter name");
-    registerWithEmailAndPassword(name, email, password);
+    const resp = registerWithEmailAndPassword(name, email, password);
+    if (resp) {
+      setIsSuccess(true);
+    }
+
   };
 
   useEffect(() => {
@@ -26,8 +31,8 @@ function Register() {
     // passing user props redirect to profile page
     // naming convention Caps each Word for methods like useEffect use camelcase
     // we need to pass name and passord as props to the cardProfile
-    if (user) navigate("/profile", { state: { user_email: email, userName: name, userPassword: password } });
-  }, [user, loading]);
+    if (isSuccess) navigate("/profile", { state: { user_email: email, userName: name, userPassword: password } });
+  }, [user, loading, isSuccess]);
 
   return (
     <div className="register">
